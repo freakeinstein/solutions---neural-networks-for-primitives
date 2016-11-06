@@ -81,7 +81,7 @@ class LA{
     
     for(int i=0;i<Alen[0];i++){
       for(int j=0;j<Alen[1];j++){
-        double sig = sigmoid((float)A.get(i,j));
+        double sig = sigmoid(A.get(i,j));
         temp.set(i,j,sig);
       }
     }
@@ -89,8 +89,23 @@ class LA{
     return temp;
   }
   
-  double sigmoid(float x){
-    return 1/(1+exp(-1*x));
+  Vector sigmoidGrad(Vector A){
+    int[] Alen = A.length();
+    Vector temp = new Vector(Alen[0],Alen[1]);
+    
+    for(int i=0;i<Alen[0];i++){
+      for(int j=0;j<Alen[1];j++){
+        double sig = sigmoid(A.get(i,j));
+        double sigrad = sig*(1-sig);
+        temp.set(i,j,sigrad);
+      }
+    }
+    
+    return temp;
+  }
+  
+  double sigmoid(double x){
+    return 1/(1+exp(-1*(float)x));
   }
   
   Vector logarithm(Vector A){
@@ -179,6 +194,17 @@ class LA{
     for(int r=0;r<input.length;r++){
       for (int c=0;c<input[0].length;c++){
         temp.set(r,c,input[r][c]);
+      }
+    }
+    return temp;
+  }
+  
+  Vector subSample(Vector A,int r_top, int r_bottom, int c_left, int c_right){
+    int[] ln = A.length();
+    Vector temp = new Vector(ln[0] - (r_top + r_bottom),ln[1] - (c_left - c_right));
+    for(int i=r_top;i<ln[0]-r_bottom;i++){
+      for(int j=c_left;j<ln[1]-c_right;j++){
+        temp.set(i-r_top,j-c_left,A.get(i,j));
       }
     }
     return temp;

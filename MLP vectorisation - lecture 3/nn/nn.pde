@@ -12,10 +12,10 @@ void setup(){
   
   //x.makeRandom(0,1);
   
-  Vector D = mlp.feedForward(x);
-  D = mlp.getCost(D,y);
+  Vector D = la.subSample(x,0,1,1,0);//mlp.feedForward(x);
+  //D = mlp.getCost(D,y);
   
-  for(int i=0;i<1;i++){
+  for(int i=0;i<2;i++){
     for(int j=0;j<1;j++){
       print(D.length()[0],D.length()[1],D.get(i,j)," ");
     }
