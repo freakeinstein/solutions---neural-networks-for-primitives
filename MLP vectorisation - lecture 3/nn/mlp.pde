@@ -8,16 +8,13 @@ class MLP{
   LA linearAlgebraObject = new LA();
   
   MLP(int batch, int in,int hid,int out){ // no bias node.. add at last time. make use of subSample() during backprop.
-    n_in = in;
-    n_hid = hid;
+    n_in = in; 
+    n_hid = hid; 
     n_out = out;
     n_batch  = batch;
     
-    w1 = new Vector(n_hid,n_in);
-    w2 = new Vector(n_out,n_hid);
-    //hiddenLayer = new Vector(n_batch,n_hid);
-    //z1 = new Vector(n_batch,n_hid);
-    //z2 = new Vector(n_batch,n_out);
+    w1 = new Vector(n_hid,n_in+1); // +1 for bias term
+    w2 = new Vector(n_out,n_hid+1); // +1 for bias term
     
     w1.makeRandom(0,1);
     w2.makeRandom(0,1);
@@ -25,9 +22,9 @@ class MLP{
   
   Vector feedForward(Vector input){
     inputLayer = input;
-    z1 = linearAlgebraObject.dot(input, linearAlgebraObject.trans(w1));
+    z1 = linearAlgebraObject.dot(linearAlgebraObject.withBias(input), linearAlgebraObject.trans(w1));
     hiddenLayer = linearAlgebraObject.sigmoid(z1);
-    z2 = linearAlgebraObject.dot(hiddenLayer, linearAlgebraObject.trans(w2));
+    z2 = linearAlgebraObject.dot(linearAlgebraObject.withBias(hiddenLayer), linearAlgebraObject.trans(w2));
     return linearAlgebraObject.sigmoid(z2);
   }
   
@@ -41,17 +38,20 @@ class MLP{
   void backPropogate(Vector P,Vector y){
     Vector temp = linearAlgebraObject.sub(y,P);
     temp = linearAlgebraObject.times(temp, linearAlgebraObject.sigmoidGrad(z2));
-    grad2 = linearAlgebraObject.dot(linearAlgebraObject.trans(temp),hiddenLayer); // scalar divide by m 
+    grad2 = linearAlgebraObject.dot(linearAlgebraObject.trans(temp),linearAlgebraObject.withBias(hiddenLayer)); // scalar divide by m 
     
     temp = linearAlgebraObject.dot(temp, w2);
-    // get rid of bias term from temp here, later
+    //print("\n",temp.length()[0],temp.length()[1]);
+    temp = linearAlgebraObject.subSample(temp,0,0,1,0); // get rid of bias term from temp here.
+    //print("\n",temp.length()[0],temp.length()[1]);
     temp = linearAlgebraObject.times(temp, linearAlgebraObject.sigmoidGrad(z1));
-    grad1 = linearAlgebraObject.dot(linearAlgebraObject.trans(temp),inputLayer); // scalar divide by m 
+    grad1 = linearAlgebraObject.dot(linearAlgebraObject.trans(temp),linearAlgebraObject.withBias(inputLayer)); // scalar divide by m 
   }
   
   void updateGradients(){
-    grad1 = linearAlgebraObject.add(grad1,w1);
-    grad2 = linearAlgebraObject.add(grad2,w2);
+    //print("\n** ",grad1.length()[0],grad1.length()[1],w1.length()[0],w1.length()[1],"   ");
+    w1 = linearAlgebraObject.add(grad1,w1);
+    w2 = linearAlgebraObject.add(grad2,w2);
   }
   
 }

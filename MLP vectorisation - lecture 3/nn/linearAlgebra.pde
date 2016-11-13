@@ -199,6 +199,22 @@ class LA{
     return temp;
   }
   
+  Vector withBias(Vector A){
+    int[] Alen = A.length();
+    Vector temp = new Vector(Alen[0],Alen[1]+1);
+    
+    for(int i=0;i<Alen[0];i++){
+      temp.set(i,0,1);
+    }
+    for(int i=0;i<Alen[0];i++){
+      for(int j=0;j<Alen[1];j++){
+        temp.set(i,j+1,A.get(i,j));
+      }
+    }
+    
+    return temp;
+  }
+  
   Vector subSample(Vector A,int r_top, int r_bottom, int c_left, int c_right){
     int[] ln = A.length();
     Vector temp = new Vector(ln[0] - (r_top + r_bottom),ln[1] - (c_left - c_right));
