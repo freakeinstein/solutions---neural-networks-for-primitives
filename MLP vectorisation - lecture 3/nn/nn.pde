@@ -4,7 +4,7 @@ void setup(){
   LA la = new LA();
   MLP mlp = new MLP(3,2,15,2);
   
-  double[][] A = { {1,1},{3,4},{5,0} };
+  double[][] A = { {1,1},{3,4},{5,0} }; // to do: make good examples to test training.
   double[][] B = { {1,2},{4,5},{1,1} };
   
   Vector x = la.arrayToVector(A);
@@ -12,34 +12,43 @@ void setup(){
   
   //x.makeRandom(0,1);
   
-  Vector D = mlp.feedForward(x);
-  Vector BB = mlp.getCost(D,y);
-  mlp.backPropogate(D,y);
-  mlp.updateGradients();
+  mlp.clearGradientsToZero();
   
+  int counter = 0;
+  while(true){ // running epoch.
   
-  for(int i=0;i<3;i++){
-    for(int j=0;j<2;j++){
-      print(D.length()[0],D.length()[1],D.get(i,j)," ");
+    Vector D = mlp.feedForward(x); // predict.    
+    mlp.backPropogate(D,y); // during backprop. gradients will only get accumulated not updated.
+    
+    
+    if(counter % 10 == 0){ 
+      Vector cost = mlp.getCost(D,y); // calculate cost.
+      print("\n cost: ",cost.get(0,0)," ");
+      
+      mlp.updateGradients(); // update weights based on previous online learning.
+      mlp.clearGradientsToZero(); // clear gradient accumulation after weights updation. IMPORTANT.
+      
+      //showVectorContents(D);
+    
+      counter = 0;
     }
-    print("\n");
+    
   }
   
   
-  D = mlp.feedForward(x);
-  BB = mlp.getCost(D,y);
-  mlp.backPropogate(D,y);
-  mlp.updateGradients();
+}
+
+void showVectorContents(Vector v){
+  int r = v.length()[0];
+  int c = v.length()[1];
   
-  
-  for(int i=0;i<3;i++){
-    for(int j=0;j<2;j++){
-      print(D.length()[0],D.length()[1],D.get(i,j)," ");
+  for(int i=0;i<r;i++){
+    for(int j=0;j<c;j++){
+      print(v.get(i,j)," ");
     }
     print("\n");
   }
-  
-  
+  print("\n");
 }
 
 void draw(){

@@ -150,6 +150,20 @@ class LA{
     return temp;
   }
   
+  Vector divScalar(Vector A, float scalar){
+    int[] Alen = A.length();
+    Vector temp = new Vector(Alen[0],Alen[1]);
+    
+    for(int i=0;i<Alen[0];i++){
+      for(int j=0;j<Alen[1];j++){
+        double sum = A.get(i,j)/scalar;
+        temp.set(i,j,sum);
+      }
+    }
+    
+    return temp;
+  }
+  
   Vector rowSum(Vector A){
     int[] Alen = A.length();
     Vector temp = new Vector(Alen[0],1);

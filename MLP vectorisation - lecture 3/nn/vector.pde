@@ -26,6 +26,14 @@ class Vector{
     }
   }
   
+  void fill(double val){
+    for(int r=0;r<n_raw;r++){
+      for(int c=0;c<n_col;c++){
+        array[ r * n_col + c ] = val;
+      }
+    }
+  }
+  
   int[] length(){
     int[] temp = new int[2];
     temp[0] = n_raw;
